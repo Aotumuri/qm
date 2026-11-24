@@ -4,11 +4,15 @@ import { useLocale } from '../i18n'
 defineProps<{
   scale: number
   persistent: boolean
+  lineSpacing: number
+  lineSpacingPersistent: boolean
 }>()
 
 const emit = defineEmits<{
   change: [value: number]
   reset: []
+  lineSpacingChange: [value: number]
+  lineSpacingReset: []
 }>()
 
 const { t } = useLocale()
@@ -16,6 +20,11 @@ const { t } = useLocale()
 function updateScale(event: Event) {
   const input = event.target
   if (input instanceof HTMLInputElement) emit('change', Number(input.value))
+}
+
+function updateLineSpacing(event: Event) {
+  const input = event.target
+  if (input instanceof HTMLInputElement) emit('lineSpacingChange', Number(input.value))
 }
 </script>
 
@@ -52,7 +61,39 @@ function updateScale(event: Event) {
       >
         {{ t('resetSize') }}
       </button>
-      <p v-if="!persistent" class="scale-warning" role="status">
+      <hr class="settings-divider" />
+      <label for="memo-line-spacing">{{ t('memoLineSpacing') }}</label>
+      <div class="scale-control">
+        <span class="scale-endpoint">1.2</span>
+        <input
+          id="memo-line-spacing"
+          name="memo-line-spacing"
+          type="range"
+          min="120"
+          max="200"
+          step="10"
+          :value="lineSpacing"
+          :aria-valuetext="t('lineSpacingValue', { value: (lineSpacing / 100).toFixed(1) })"
+          aria-describedby="memo-line-spacing-help"
+          @input="updateLineSpacing"
+        />
+        <span class="scale-endpoint">2.0</span>
+        <output for="memo-line-spacing">
+          {{ t('lineSpacingValue', { value: (lineSpacing / 100).toFixed(1) }) }}
+        </output>
+      </div>
+      <p id="memo-line-spacing-help" class="scale-help">
+        {{ t('lineSpacingHelp') }}
+      </p>
+      <button
+        class="text-button reset-scale-button"
+        type="button"
+        :disabled="lineSpacing === 150"
+        @click="emit('lineSpacingReset')"
+      >
+        {{ t('resetLineSpacing') }}
+      </button>
+      <p v-if="!persistent || !lineSpacingPersistent" class="scale-warning" role="status">
         {{ t('scaleNotSaved') }}
       </p>
     </div>

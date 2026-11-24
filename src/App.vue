@@ -7,12 +7,19 @@ import MemoList from './components/MemoList.vue'
 import NotebookSidebar from './components/NotebookSidebar.vue'
 import { i18n, type Locale, useLocale } from './i18n'
 import { useDisplayScale } from './composables/useDisplayScale'
+import { useMemoLineSpacing } from './composables/useMemoLineSpacing'
 import { useMemoData } from './composables/useMemoData'
 import { memoContentToText } from './domain/memoContent'
 import type { Memo, Notebook } from './domain/types'
 
 const { t } = useLocale()
 const { scale, persistent: scalePersistent, setScale, resetScale } = useDisplayScale()
+const {
+  lineSpacing,
+  persistent: lineSpacingPersistent,
+  setLineSpacing,
+  resetLineSpacing,
+} = useMemoLineSpacing()
 const {
   notebooks,
   memos,
@@ -154,8 +161,12 @@ async function retryLoading() {
         <DisplaySettings
           :scale="scale"
           :persistent="scalePersistent"
+          :line-spacing="lineSpacing"
+          :line-spacing-persistent="lineSpacingPersistent"
           @change="setScale"
           @reset="resetScale"
+          @line-spacing-change="setLineSpacing"
+          @line-spacing-reset="resetLineSpacing"
         />
         <span class="privacy-badge">
           <span class="privacy-dot" aria-hidden="true"></span>

@@ -15,7 +15,7 @@ npm run build
 
 GitHub Pages deployment is configured in GitHub Actions. Set the repository's Pages source to **GitHub Actions**.
 
-Use the **Display size** control to adjust the interface from 80% to 125%; the preference is saved in this browser.
+Use **Display settings** to adjust the interface size and memo-body line spacing; preferences are saved in this browser.
 
 Memo bodies support bold text and heading levels 1–3; the memo title remains separate.
 
