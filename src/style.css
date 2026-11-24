@@ -57,6 +57,7 @@ input:disabled {
   display: flex;
   min-block-size: 100dvh;
   flex-direction: column;
+  zoom: var(--qmeo-ui-scale, 1);
 }
 
 .topbar {
@@ -151,6 +152,104 @@ input:disabled {
   background: var(--paper);
   color: var(--ink);
   box-shadow: 0 1px 3px #24292314;
+}
+
+.display-settings {
+  position: relative;
+}
+
+.display-settings-trigger {
+  display: inline-flex;
+  min-block-size: 2.75rem;
+  align-items: center;
+  gap: 0.4rem;
+  padding-inline: 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 0.65rem;
+  background: var(--paper);
+  color: #55584f;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+  list-style: none;
+}
+
+.display-settings-trigger::-webkit-details-marker {
+  display: none;
+}
+
+.display-settings-trigger:hover {
+  background: #f5f4ef;
+}
+
+.settings-glyph {
+  color: var(--accent);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.display-settings-popover {
+  position: absolute;
+  z-index: 5;
+  inset-block-start: calc(100% + 0.5rem);
+  inset-inline-end: 0;
+  inline-size: min(18rem, calc(100vw - 2rem));
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 0.8rem;
+  background: var(--paper);
+  box-shadow: 0 12px 32px #2429231c;
+}
+
+.display-settings-popover > label {
+  display: block;
+  margin-block-end: 0.65rem;
+  color: var(--ink);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.scale-control {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.scale-control input[type='range'] {
+  min-inline-size: 0;
+  min-block-size: 2.75rem;
+  flex: 1;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.scale-endpoint {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.scale-control output {
+  min-inline-size: 2.7rem;
+  color: var(--ink);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+}
+
+.scale-help,
+.scale-warning {
+  margin: 0.35rem 0 0;
+  color: var(--muted);
+  font-size: 0.7rem;
+  line-height: 1.5;
+}
+
+.reset-scale-button {
+  margin-block-start: 0.35rem;
+}
+
+.scale-warning {
+  color: var(--danger);
 }
 
 .workspace {
@@ -797,6 +896,22 @@ input:disabled {
     gap: 0.65rem;
   }
 
+  .display-settings-label {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .display-settings-popover {
+    position: fixed;
+    inset-block-start: 8rem;
+    inset-inline: 0.75rem;
+    inline-size: auto;
+  }
+
   .privacy-badge {
     font-size: 0;
   }
@@ -863,6 +978,7 @@ input:disabled {
 
 @media (pointer: coarse) {
   .language-switch button,
+  .display-settings-trigger,
   .small-icon-button,
   .text-button {
     min-block-size: 2.75rem;

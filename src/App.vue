@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import ConfirmDialog from './components/ConfirmDialog.vue'
+import DisplaySettings from './components/DisplaySettings.vue'
 import MemoEditor from './components/MemoEditor.vue'
 import MemoList from './components/MemoList.vue'
 import NotebookSidebar from './components/NotebookSidebar.vue'
 import { i18n, type Locale, useLocale } from './i18n'
+import { useDisplayScale } from './composables/useDisplayScale'
 import { useMemoData } from './composables/useMemoData'
 import type { Memo, Notebook } from './domain/types'
 
 const { t } = useLocale()
+const { scale, persistent: scalePersistent, setScale, resetScale } = useDisplayScale()
 const {
   notebooks,
   memos,
@@ -147,6 +150,12 @@ async function retryLoading() {
       </a>
       <p class="topbar-tagline">{{ t('tagline') }}</p>
       <div class="topbar-actions">
+        <DisplaySettings
+          :scale="scale"
+          :persistent="scalePersistent"
+          @change="setScale"
+          @reset="resetScale"
+        />
         <span class="privacy-badge">
           <span class="privacy-dot" aria-hidden="true"></span>
           {{ t('localOnly') }}
