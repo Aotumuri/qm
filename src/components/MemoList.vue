@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useLocale } from '../i18n'
+import { memoContentToText } from '../domain/memoContent'
 import type { Memo } from '../domain/types'
 
 defineProps<{
@@ -20,6 +21,10 @@ const dateFormatter = computed(
   () => new Intl.DateTimeFormat(locale.value, { month: 'short', day: 'numeric' }),
 )
 
+function getPreview(memo: Memo) {
+  return memoContentToText(memo.content).trim() || t('emptyMemoPreview')
+}
+
 function formatUpdatedAt(value: string) {
   return dateFormatter.value.format(new Date(value))
 }
@@ -37,9 +42,7 @@ function formatUpdatedAt(value: string) {
           @click="emit('select', memo.id)"
         >
           <span class="memo-card-title">{{ memo.title.trim() || t('untitledMemo') }}</span>
-          <span class="memo-card-preview">
-            {{ memo.content.trim() || t('emptyMemoPreview') }}
-          </span>
+          <span class="memo-card-preview">{{ getPreview(memo) }}</span>
           <time class="memo-card-date" :datetime="memo.updatedAt">
             {{ formatUpdatedAt(memo.updatedAt) }}
           </time>

@@ -1,7 +1,12 @@
 <script setup lang="ts">
-import { onBeforeUnmount, ref, watch } from 'vue'
+import { onBeforeUnmount, ref, toRaw, watch } from 'vue'
+import StarterKit from '@tiptap/starter-kit'
+import Placeholder from '@tiptap/extension-placeholder'
+import { EditorContent, useEditor } from '@tiptap/vue-3'
 import { useLocale } from '../i18n'
+import { toMemoDocument } from '../domain/memoContent'
 import type { Memo } from '../domain/types'
+import MemoFormattingToolbar from './MemoFormattingToolbar.vue'
 
 const props = defineProps<{
   memo: Memo | null
@@ -14,8 +19,40 @@ const emit = defineEmits<{
 
 const { t } = useLocale()
 const title = ref(props.memo?.title ?? '')
-const content = ref(props.memo?.content ?? '')
+const content = ref(toMemoDocument(props.memo?.content ?? ''))
 let saveTimer: number | undefined
+
+const editor = useEditor({
+  extensions: [
+    StarterKit.configure({
+      blockquote: false,
+      bulletList: false,
+      code: false,
+      codeBlock: false,
+      heading: { levels: [1, 2, 3] },
+      horizontalRule: false,
+      italic: false,
+      link: false,
+      orderedList: false,
+      strike: false,
+      underline: false,
+    }),
+    Placeholder.configure({ placeholder: t('memoPlaceholder') }),
+  ],
+  content: content.value,
+  editorProps: {
+    attributes: {
+      id: 'memo-content',
+      class: 'memo-content-input',
+      role: 'textbox',
+      'aria-label': t('memoContent'),
+      'aria-multiline': 'true',
+    },
+  },
+  onUpdate: ({ editor: currentEditor }) => {
+    content.value = currentEditor.getJSON()
+  },
+})
 
 watch(
   [title, content],
@@ -31,7 +68,11 @@ function saveNow() {
   if (!props.memo) return
   window.clearTimeout(saveTimer)
   saveTimer = undefined
-  emit('save', { id: props.memo.id, title: title.value, content: content.value })
+  emit('save', {
+    id: props.memo.id,
+    title: title.value,
+    content: structuredClone(toRaw(content.value)),
+  })
 }
 
 function flushSave() {
@@ -68,21 +109,13 @@ onBeforeUnmount(() => window.removeEventListener('pagehide', flushSave))
       @blur="flushSave"
     />
 
+    <MemoFormattingToolbar v-if="editor" :editor="editor" />
+
     <div class="editor-meta">
-      <span>{{ t('plainText') }}</span>
       <span>{{ t('savedInBrowser') }}</span>
     </div>
 
-    <label class="visually-hidden" for="memo-content">{{ t('memoContent') }}</label>
-    <textarea
-      id="memo-content"
-      v-model="content"
-      class="memo-content-input"
-      name="memo-content"
-      :placeholder="t('memoPlaceholder')"
-      spellcheck
-      @blur="flushSave"
-    ></textarea>
+    <EditorContent v-if="editor" :editor="editor" @blur="flushSave" />
   </div>
 
   <div v-else class="editor-empty-state">

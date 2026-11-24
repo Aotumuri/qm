@@ -8,6 +8,7 @@ import NotebookSidebar from './components/NotebookSidebar.vue'
 import { i18n, type Locale, useLocale } from './i18n'
 import { useDisplayScale } from './composables/useDisplayScale'
 import { useMemoData } from './composables/useMemoData'
+import { memoContentToText } from './domain/memoContent'
 import type { Memo, Notebook } from './domain/types'
 
 const { t } = useLocale()
@@ -40,7 +41,7 @@ const filteredMemos = computed(() => {
   const query = searchQuery.value.trim().toLocaleLowerCase()
   if (!query) return memos.value
   return memos.value.filter((memo) =>
-    `${memo.title}\n${memo.content}`.toLocaleLowerCase().includes(query),
+    `${memo.title}\n${memoContentToText(memo.content)}`.toLocaleLowerCase().includes(query),
   )
 })
 

@@ -38,6 +38,25 @@ describe('memo repository', () => {
     })
   })
 
+  it('persists formatted memo content as structured data', async () => {
+    const notebook = await repository.createNotebook('Ideas')
+    const memo = await repository.createMemo(notebook.id)
+    const content = {
+      type: 'doc',
+      content: [
+        {
+          type: 'heading',
+          attrs: { level: 2 },
+          content: [{ type: 'text', text: 'A formatted thought' }],
+        },
+      ],
+    }
+
+    await repository.saveMemo({ id: memo.id, title: 'Title', content })
+
+    expect((await repository.getMemos(notebook.id))[0]?.content).toEqual(content)
+  })
+
   it('renames a notebook without changing its memos', async () => {
     const notebook = await repository.createNotebook('Drafts')
     const memo = await repository.createMemo(notebook.id)

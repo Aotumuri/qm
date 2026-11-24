@@ -42,7 +42,8 @@ button {
 
 button:focus-visible,
 input:focus-visible,
-textarea:focus-visible {
+textarea:focus-visible,
+[contenteditable='true']:focus-visible {
   outline: 3px solid #84a78b;
   outline-offset: 2px;
 }
@@ -716,22 +717,102 @@ input:disabled {
   font-size: 0.68rem;
 }
 
+.memo-format-toolbar {
+  display: flex;
+  min-block-size: 2.75rem;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 0.45rem;
+  overflow-x: auto;
+  margin-block-start: 1rem;
+  padding: 0.25rem;
+  border: 1px solid var(--line);
+  border-radius: 0.65rem;
+  background: #fbfaf7;
+}
+
+.formatting-button-group {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 0.25rem;
+}
+
+.formatting-button {
+  display: inline-grid;
+  min-inline-size: 2.25rem;
+  min-block-size: 2.25rem;
+  place-items: center;
+  padding-inline: 0.4rem;
+  border: 1px solid transparent;
+  border-radius: 0.4rem;
+  background: transparent;
+  color: #55584f;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.formatting-button:hover {
+  background: #f0efe9;
+}
+
+.formatting-button[aria-pressed='true'] {
+  border-color: #78927d;
+  background: var(--accent-soft);
+  color: #345941;
+}
+
+.formatting-separator {
+  min-block-size: 1.5rem;
+  flex: 0 0 auto;
+  border-inline-start: 1px solid var(--line);
+}
+
 .memo-content-input {
   inline-size: 100%;
   min-block-size: min(45dvh, 34rem);
   flex: 1;
   padding: 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
   color: #464a43;
   font-size: max(1rem, 0.9375rem);
   line-height: 1.8;
-  resize: vertical;
+  overflow-wrap: anywhere;
 }
 
-.memo-content-input:focus-visible {
-  outline-offset: 0.25rem;
+.memo-content-input > :first-child {
+  margin-block-start: 0;
+}
+
+.memo-content-input > :last-child {
+  margin-block-end: 0;
+}
+
+.memo-content-input p.is-editor-empty:first-child::before {
+  float: left;
+  block-size: 0;
+  color: #aaa99f;
+  content: attr(data-placeholder);
+  pointer-events: none;
+}
+
+.memo-content-input h1,
+.memo-content-input h2,
+.memo-content-input h3 {
+  color: var(--ink);
+  font-family: var(--serif);
+  line-height: 1.35;
+}
+
+.memo-content-input h1 {
+  font-size: 1.8rem;
+}
+
+.memo-content-input h2 {
+  font-size: 1.5rem;
+}
+
+.memo-content-input h3 {
+  font-size: 1.25rem;
 }
 
 .editor-empty-state {
@@ -980,11 +1061,21 @@ input:disabled {
   .language-switch button,
   .display-settings-trigger,
   .small-icon-button,
-  .text-button {
+  .text-button,
+  .formatting-button {
     min-block-size: 2.75rem;
   }
 
-  .small-icon-button {
+  .small-icon-button,
+  .formatting-button {
     min-inline-size: 2.75rem;
+  }
+}
+
+@media (forced-colors: active) {
+  .formatting-button[aria-pressed='true'] {
+    border-color: Highlight;
+    background: Highlight;
+    color: HighlightText;
   }
 }
